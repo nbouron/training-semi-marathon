@@ -3,6 +3,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # Re-run after making the repository public, so GitHub Pages (free tier)
+  # can actually be enabled and this deploy can succeed.
   workflow_dispatch:
 
 permissions:
