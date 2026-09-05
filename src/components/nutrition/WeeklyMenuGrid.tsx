@@ -38,11 +38,11 @@ export function WeeklyMenuGrid({ plan, profile, week }: Props) {
 
   return (
     <div className="overflow-x-auto">
-      <div className="flex gap-3" style={{ minWidth: '840px' }}>
+      <div className="flex gap-3 md:grid md:grid-cols-7 md:gap-3" style={{ minWidth: '840px' }}>
         {baseMenu.map((dayMenu, dayIndex) => {
           const date = addDays(parseISO(week.startDate), dayIndex);
           return (
-            <div key={dayIndex} className="w-40 shrink-0 rounded-xl border border-slate-200 bg-white p-3">
+            <div key={dayIndex} className="w-40 shrink-0 rounded-xl border border-slate-200 bg-white p-3 md:w-auto">
               <p className="mb-2 text-center text-xs font-semibold text-slate-700">
                 {format(date, 'EEEE d MMM', { locale: fr })}
               </p>

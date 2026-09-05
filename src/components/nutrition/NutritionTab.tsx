@@ -44,7 +44,7 @@ export function NutritionTab({ plan, profile }: Props) {
     <div className="space-y-8">
       <section>
         <h2 className="mb-3 text-lg font-bold text-slate-900">Principes généraux</h2>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {GENERAL_PRINCIPLES.map((p) => (
             <div key={p.title} className="rounded-xl border border-slate-200 bg-white p-4">
               <p className="mb-1 font-semibold text-slate-900">{p.title}</p>
@@ -56,7 +56,7 @@ export function NutritionTab({ plan, profile }: Props) {
 
       <section>
         <h2 className="mb-3 text-lg font-bold text-slate-900">Nutrition par séance</h2>
-        <div className="space-y-2">
+        <div className="grid gap-3 md:grid-cols-3">
           <GuidanceCard title="Avant une séance courte" text={preShortSessionGuidance()} />
           <GuidanceCard title="Avant et pendant la sortie longue (+ de 75 min)" text={longRunFuelingGuidance(90)} />
           <GuidanceCard title="Après l'effort" text={postEffortGuidance()} />
@@ -66,7 +66,7 @@ export function NutritionTab({ plan, profile }: Props) {
       {isRaceWeek && (
         <section>
           <h2 className="mb-3 text-lg font-bold text-slate-900">Semaine de course et jour J</h2>
-          <div className="space-y-2">
+          <div className="grid gap-3 md:grid-cols-2">
             {RACE_WEEK_GUIDANCE.map((g) => (
               <GuidanceCard key={g.title} title={g.title} text={g.text} />
             ))}
@@ -99,7 +99,7 @@ export function NutritionTab({ plan, profile }: Props) {
             </button>
           ))}
         </div>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {recipes.map((r) => {
             const overrideKey = `${moment}:${r.id}`;
             const shown = RECIPES.find((x) => x.id === bankOverrides[overrideKey]) ?? r;

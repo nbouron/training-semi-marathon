@@ -15,7 +15,7 @@ export function NavBar({ active, onChange }: Props) {
   return (
     <nav
       aria-label="Navigation principale"
-      className="safe-bottom fixed inset-x-0 bottom-0 z-40 flex border-t border-slate-200 bg-white"
+      className="safe-bottom fixed inset-x-0 bottom-0 z-40 flex border-t border-slate-200 bg-white md:hidden"
     >
       {TABS.map((tab) => (
         <button

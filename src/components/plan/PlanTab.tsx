@@ -20,12 +20,12 @@ export function PlanTab({ plan }: Props) {
 
   return (
     <div>
-      <div className="mb-4 flex gap-2">
+      <div className="mb-4 flex gap-2 md:inline-flex md:rounded-lg md:bg-slate-100 md:p-1">
         <button
           type="button"
           onClick={() => setView('semaine')}
-          className={`flex-1 rounded-lg px-4 py-2 text-sm font-semibold ${
-            view === 'semaine' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600'
+          className={`flex-1 rounded-lg px-4 py-2 text-sm font-semibold transition-colors md:flex-none ${
+            view === 'semaine' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 md:bg-transparent'
           }`}
         >
           Vue semaine
@@ -33,8 +33,8 @@ export function PlanTab({ plan }: Props) {
         <button
           type="button"
           onClick={() => setView('calendrier')}
-          className={`flex-1 rounded-lg px-4 py-2 text-sm font-semibold ${
-            view === 'calendrier' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600'
+          className={`flex-1 rounded-lg px-4 py-2 text-sm font-semibold transition-colors md:flex-none ${
+            view === 'calendrier' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 md:bg-transparent'
           }`}
         >
           Calendrier complet

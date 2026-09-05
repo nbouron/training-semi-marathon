@@ -35,47 +35,51 @@ export function Dashboard({ plan }: Props) {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
         <StatTile label="Jours avant la course" value={stats.daysToRace >= 0 ? String(stats.daysToRace) : '0'} />
         <StatTile label="Séances réalisées" value={`${stats.completedCount} / ${stats.totalSessions}`} />
         <StatTile label="Kilomètres cumulés" value={`${stats.completedKm} km`} />
         <StatTile label="Adhérence au plan" value={`${stats.adherencePct}%`} />
       </div>
 
-      <div>
-        <h2 className="mb-3 text-lg font-bold text-slate-900">Volume hebdomadaire</h2>
-        <VolumeChart plan={plan} />
-      </div>
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <h2 className="mb-3 text-lg font-bold text-slate-900">Volume hebdomadaire</h2>
+          <VolumeChart plan={plan} />
+        </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-4">
-        <h2 className="mb-1 text-lg font-bold text-slate-900">Ton programme</h2>
-        <p className="mb-3 text-sm text-slate-600">
-          Objectif : {plan.profile.goal.type === 'terminer' ? 'terminer la course' : plan.profile.goal.type} · Niveau de
-          faisabilité : <strong>{plan.feasibility.replace('_', ' ')}</strong>
-        </p>
-        <button
-          type="button"
-          onClick={() => exportPlanToPdf(plan)}
-          className="w-full rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white hover:bg-blue-700"
-        >
-          Exporter le programme en PDF
-        </button>
-      </div>
+        <div className="space-y-4">
+          <div className="rounded-xl border border-slate-200 bg-white p-4">
+            <h2 className="mb-1 text-lg font-bold text-slate-900">Ton programme</h2>
+            <p className="mb-3 text-sm text-slate-600">
+              Objectif : {plan.profile.goal.type === 'terminer' ? 'terminer la course' : plan.profile.goal.type} · Niveau
+              de faisabilité : <strong>{plan.feasibility.replace('_', ' ')}</strong>
+            </p>
+            <button
+              type="button"
+              onClick={() => exportPlanToPdf(plan)}
+              className="w-full rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white hover:bg-blue-700"
+            >
+              Exporter le programme en PDF
+            </button>
+          </div>
 
-      <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-        <h2 className="mb-1 font-semibold text-red-900">Recommencer</h2>
-        <p className="mb-3 text-sm text-red-800">
-          Efface le programme actuel et relance le questionnaire depuis le début.
-        </p>
-        <button
-          type="button"
-          onClick={() => {
-            if (confirm('Supprimer le programme actuel et recommencer ?')) resetPlan();
-          }}
-          className="w-full rounded-lg border border-red-300 bg-white px-4 py-2 font-semibold text-red-700 hover:bg-red-100"
-        >
-          Recommencer le questionnaire
-        </button>
+          <div className="rounded-xl border border-red-200 bg-red-50 p-4">
+            <h2 className="mb-1 font-semibold text-red-900">Recommencer</h2>
+            <p className="mb-3 text-sm text-red-800">
+              Efface le programme actuel et relance le questionnaire depuis le début.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                if (confirm('Supprimer le programme actuel et recommencer ?')) resetPlan();
+              }}
+              className="w-full rounded-lg border border-red-300 bg-white px-4 py-2 font-semibold text-red-700 hover:bg-red-100"
+            >
+              Recommencer le questionnaire
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -84,7 +88,7 @@ export function Dashboard({ plan }: Props) {
 function StatTile({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4">
-      <p className="text-2xl font-bold text-slate-900">{value}</p>
+      <p className="text-2xl font-bold tabular-nums text-slate-900 md:text-3xl">{value}</p>
       <p className="text-xs text-slate-500">{label}</p>
     </div>
   );

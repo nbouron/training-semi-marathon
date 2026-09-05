@@ -13,12 +13,17 @@ export function VolumeChart({ plan }: Props) {
   }));
 
   return (
-    <div className="h-56 w-full rounded-xl border border-slate-200 bg-white p-3">
+    <div className="h-56 w-full rounded-xl border border-slate-200 bg-white p-3 md:h-80 md:p-5">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
+        <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
           <XAxis dataKey="name" tick={{ fontSize: 11 }} stroke="#94a3b8" />
-          <YAxis tick={{ fontSize: 11 }} stroke="#94a3b8" width={32} />
+          <YAxis
+            tick={{ fontSize: 11 }}
+            stroke="#94a3b8"
+            width={40}
+            label={{ value: 'km', angle: -90, position: 'insideLeft', style: { fontSize: 11, fill: '#94a3b8' } }}
+          />
           <Tooltip
             formatter={(value: number) => [`${value} km`, 'Volume']}
             contentStyle={{ fontSize: 12, borderRadius: 8 }}
