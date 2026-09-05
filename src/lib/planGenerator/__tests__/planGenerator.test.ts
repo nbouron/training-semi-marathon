@@ -80,6 +80,30 @@ describe('generatePlan', () => {
     expect(plan.shortNotice).toBe(true);
   });
 
+  it('never lets a non-long-run session rival or exceed the long run', () => {
+    // Regression test: with few sessions/week, all "remaining" weekly volume used to
+    // get dumped into the single non-long-run session, producing 30+ km "footings".
+    for (const level of ['debutant', 'occasionnel', 'regulier', 'confirme'] as const) {
+      const plan = generatePlan(
+        makeProfile({
+          level,
+          sessionsPerWeek: 2,
+          goal: { type: '1h40' },
+          raceDate: toISODate(addDays(new Date(), 18 * 7)),
+          availableDays: [2, 6],
+        }),
+      );
+      for (const week of plan.weeks) {
+        const longRun = week.sessions.find((s) => s.type === 'sortie_longue' && s.distanceKm !== 21.1);
+        for (const s of week.sessions) {
+          if (s.type === 'repos' || s.distanceKm === 21.1 || s === longRun) continue;
+          expect(s.distanceKm ?? 0).toBeLessThanOrEqual(16);
+          if (longRun) expect(s.distanceKm ?? 0).toBeLessThan(longRun.distanceKm ?? Infinity);
+        }
+      }
+    }
+  });
+
   it('computes feasibility deterministically', () => {
     const levels: Level[] = ['debutant', 'occasionnel', 'regulier', 'confirme'];
     for (const level of levels) {

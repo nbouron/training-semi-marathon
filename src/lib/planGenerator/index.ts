@@ -11,6 +11,9 @@ import { computeWeeklyVolumes } from './volume';
 
 export * from './pace';
 
+// No non-long-run session (easy, tempo, fractionné) should ever rival the long run.
+const NON_LONG_RUN_MAX_KM = 16;
+
 function phaseBlockRanges(metas: { phase: string }[]): Map<number, { start: number; length: number }> {
   const map = new Map<number, { start: number; length: number }>();
   let start = 0;
@@ -126,10 +129,15 @@ export function generatePlan(profile: UserProfile): TrainingPlan {
       roles.forEach((role, idx) => {
         const date = dateMap.get(idx);
         if (!date) return;
-        const distanceKm =
+        let distanceKm =
           role === 'sortie_longue'
             ? vol.longRunKm
             : Math.round((remainingVol * (ROLE_WEIGHT[role] / weightSum)) * 2) / 2;
+        // The long run must stay the longest session of the week: cap any other
+        // session well below it (and below a sane absolute ceiling regardless).
+        if (role !== 'sortie_longue') {
+          distanceKm = Math.min(distanceKm, NON_LONG_RUN_MAX_KM, Math.max(3, vol.longRunKm - 1));
+        }
         const content = buildSessionContent({
           role,
           phase: meta.phase,
@@ -139,7 +147,16 @@ export function generatePlan(profile: UserProfile): TrainingPlan {
           weekIndexInPhase,
           phaseTotalWeeks: block.length,
           isPeakLongRunStretch: role === 'sortie_longue' && isPeakLongRunStretch,
+          isReducedIntensity: meta.isRecoveryWeek || meta.isTaperWeek,
         });
+        // Last-resort safety net: tempo/fractionné compute their own distance from a
+        // time-based structure, so double-check it didn't end up rivaling the long run.
+        if (role !== 'sortie_longue' && content.distanceKm > Math.min(NON_LONG_RUN_MAX_KM, vol.longRunKm - 0.5)) {
+          const cappedDistance = Math.max(2, Math.min(NON_LONG_RUN_MAX_KM, vol.longRunKm - 0.5));
+          const ratio = cappedDistance / content.distanceKm;
+          content.distanceKm = Math.round(cappedDistance * 10) / 10;
+          content.durationMin = Math.round(content.durationMin * ratio);
+        }
         built.push(makeSession(content, weekNumber, date, profile.injuries, ROLE_IS_HARD[role], false));
       });
 

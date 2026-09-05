@@ -8,12 +8,27 @@ const START_VOLUME_KM: Record<Level, number> = {
   confirme: 25,
 };
 
-const MAX_VOLUME_KM: Record<Level, number> = {
+// Baseline ceiling assuming 5 sessions/week to spread the volume across.
+const MAX_VOLUME_KM_AT_5_SESSIONS: Record<Level, number> = {
   debutant: 32,
   occasionnel: 42,
   regulier: 52,
   confirme: 62,
 };
+
+// With fewer sessions, the same weekly volume would have to be crammed into fewer,
+// unrealistically long non-long-run sessions — so the ceiling scales down with them.
+const VOLUME_CAP_FACTOR_BY_SESSIONS: Record<number, number> = {
+  2: 0.5,
+  3: 0.7,
+  4: 0.85,
+  5: 1,
+};
+
+function maxVolumeKm(level: Level, sessionsPerWeek: number): number {
+  const factor = VOLUME_CAP_FACTOR_BY_SESSIONS[sessionsPerWeek] ?? 1;
+  return MAX_VOLUME_KM_AT_5_SESSIONS[level] * factor;
+}
 
 const MIN_LONG_RUN_KM: Record<Level, number> = {
   debutant: 3,
@@ -44,7 +59,7 @@ export function computeWeeklyVolumes(
   level: Level,
   sessionsPerWeek: number,
 ): WeekVolume[] {
-  const cap = MAX_VOLUME_KM[level];
+  const cap = maxVolumeKm(level, sessionsPerWeek);
   const longRunRatio = LONG_RUN_RATIO_BY_SESSIONS[sessionsPerWeek] ?? 0.4;
   const minLongRun = MIN_LONG_RUN_KM[level];
 

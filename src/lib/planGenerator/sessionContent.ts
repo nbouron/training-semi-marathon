@@ -11,6 +11,8 @@ export interface ContentInput {
   weekIndexInPhase: number;
   phaseTotalWeeks: number;
   isPeakLongRunStretch: boolean;
+  /** Recovery or taper week: quality sessions keep some intensity but get shortened. */
+  isReducedIntensity: boolean;
 }
 
 export interface SessionContent {
@@ -104,7 +106,8 @@ export function buildSessionContent(input: ContentInput): SessionContent {
       const isSpecific = phase === 'specifique';
       const range: [number, number] = isSpecific ? [ref, ref + 0.15] : [ref + 0.4, ref + 0.6];
       const p = progress(weekIndexInPhase, phaseTotalWeeks);
-      const coreMin = Math.round((isSpecific ? 20 : 15) + p * 10);
+      let coreMin = Math.round((isSpecific ? 20 : 15) + p * 10);
+      if (input.isReducedIntensity) coreMin = Math.max(8, Math.round(coreMin * 0.5));
       return {
         type: 'tempo',
         title: isSpecific ? 'Allure course' : 'Tempo modéré',
@@ -113,7 +116,9 @@ export function buildSessionContent(input: ContentInput): SessionContent {
         targetPaceMinKm: range,
         description: `Footing d'approche 10 min à allure facile, puis ${coreMin} min à ${
           isSpecific ? 'allure course' : 'allure tempo (soutenue mais contrôlée)'
-        } (${paceText(range)}), enchaînés sans pause.`,
+        } (${paceText(range)}), enchaînés sans pause.${
+          input.isReducedIntensity ? ' Séance raccourcie (semaine allégée) : on garde le rythme, pas le volume.' : ''
+        }`,
       };
     }
 
@@ -121,8 +126,9 @@ export function buildSessionContent(input: ContentInput): SessionContent {
       const isSpecific = phase === 'specifique';
       const range: [number, number] = [ref - 0.25, ref - 0.1];
       const p = progress(weekIndexInPhase, phaseTotalWeeks);
+      let reps = isSpecific ? Math.round(4 + p * 2) : Math.round(6 + p * 4);
+      if (input.isReducedIntensity) reps = Math.max(3, Math.round(reps * 0.5));
       const intervalM = isSpecific ? 1000 : 400;
-      const reps = isSpecific ? Math.round(4 + p * 2) : Math.round(6 + p * 4);
       const recoveryText = isSpecific ? '2 min de trot' : '1 min de trot';
       const totalIntervalKm = (intervalM * reps) / 1000;
       const durationMin = Math.round(20 + totalIntervalKm * ((range[0] + range[1]) / 2) + reps * 1.2);
@@ -134,7 +140,9 @@ export function buildSessionContent(input: ContentInput): SessionContent {
         targetPaceMinKm: range,
         description: `10 min de footing d'échauffement, puis ${reps} x ${intervalM} m ${
           isSpecific ? 'proche allure objectif' : 'allure vive'
-        } (${paceText(range)}), récupération ${recoveryText} entre chaque. Finir par 10 min de footing très facile.`,
+        } (${paceText(range)}), récupération ${recoveryText} entre chaque. Finir par 10 min de footing très facile.${
+          input.isReducedIntensity ? ' Séance raccourcie (semaine allégée) : on garde le rythme, pas le volume.' : ''
+        }`,
       };
     }
 
